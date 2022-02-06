@@ -1,0 +1,9 @@
+sqs:
+  connection:
+    name: engine-temperatures
+    url: http://localhost:4566/000000000000/engine-temperatures
+
+escalation:
+  delay: 60
+  threshold:
+    temperature: 50.0
