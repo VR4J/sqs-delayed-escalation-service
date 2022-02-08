@@ -16,21 +16,16 @@ public class TemperatureCheckListener {
 
     public void onTemperatureCheck(TemperatureCheckMessage message) {
         if(engine.getTemperature() > escalation.getThreshold().getTemperature()) {
-            EngineState.Severity onChangeSeverity = message.getSeverity();
+            EngineState.Severity previousSeverity = message.getSeverity();
+            EngineState.Severity nextSeverity = previousSeverity == EngineState.Severity.CLEAR
+                ? EngineState.Severity.WARNING
+                : EngineState.Severity.CRITICAL;
 
-            if(onChangeSeverity == EngineState.Severity.CLEAR) {
-                if(engine.getSeverity() == EngineState.Severity.WARNING) return;
+            if(engine.getSeverity() == nextSeverity) return;
 
-                log.info("Sending notification: Engine temperature has been above configured threshold of '{}' degrees celsius.", escalation.getThreshold().getTemperature());
-                log.info("Engine severity raised to {}", EngineState.Severity.WARNING);
-                engine.setSeverity(EngineState.Severity.WARNING);
-            } else if(onChangeSeverity == EngineState.Severity.WARNING) {
-                if(engine.getSeverity() == EngineState.Severity.CRITICAL) return;
-
-                log.info("Sending notification: Engine temperature has been above configured threshold of '{}' degrees celsius.", escalation.getThreshold().getTemperature());
-                log.info("Engine severity raised to {}", EngineState.Severity.CRITICAL);
-                engine.setSeverity(EngineState.Severity.CRITICAL);
-            }
+            log.info("Sending notification: Engine temperature has been above configured threshold of '{}' degrees celsius.", escalation.getThreshold().getTemperature());
+            log.info("Engine severity raised to {}", nextSeverity);
+            engine.setSeverity(nextSeverity);
         }
     }
 }
