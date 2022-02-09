@@ -30,6 +30,7 @@ public class SqsMessageListener implements MessageListener {
             try {
                 onMessage(sqsTextMessage);
             } catch (JMSException | JsonProcessingException e) {
+                // A better description is probably needed before we start running this in production...
                 log.error("Something went wrong retrieving the payload of the SQSTextMessage.", e);
             }
         }
